@@ -1,6 +1,7 @@
 package com.abhi
 
 import java.util.concurrent._
+import java.util.concurrent.atomic.AtomicInteger
 
 import akka.actor.Actor
 import com.codahale.metrics.ScheduledReporter.NamedThreadFactory
@@ -25,7 +26,18 @@ class ServiceActor extends Actor with HttpService with Instrumented {
    def receive = runRoute(noInstrumentation ~ instrumentation)
 
    implicit val endpointExecutor = {
-      val pool = new ThreadPoolExecutor(30, 100, 60L, TimeUnit.SECONDS, new LinkedBlockingQueue[Runnable](), new NamedThreadFactory("endpoint-executor"))
+      val pool = new ThreadPoolExecutor(30, 100, 60L, TimeUnit.SECONDS, new LinkedBlockingQueue[Runnable](), new ThreadFactory {
+         val index = new AtomicInteger(0)
+         override def newThread(r: Runnable): Thread = {
+            val name = s"endpoint-executor-${index.incrementAndGet()}"
+            val thread = new Thread(name)
+            thread.setDaemon(true)
+            if (thread.getPriority != Thread.NORM_PRIORITY) {
+               thread.setPriority(Thread.NORM_PRIORITY)
+            }
+            thread
+         }
+      })
 
       ExecutionContext.fromExecutorService(pool)
    }
