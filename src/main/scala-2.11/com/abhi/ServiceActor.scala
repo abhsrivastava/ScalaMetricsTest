@@ -1,13 +1,11 @@
 package com.abhi
 
 import java.util.concurrent._
-import java.util.concurrent.atomic.{AtomicInteger}
 import akka.actor.Actor
 import spray.http.MediaTypes._
 import spray.json.DefaultJsonProtocol
 import spray.routing.HttpService
-import com.twitter.concurrent.NamedPoolThreadFactory
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{Future}
 
 case class Person (name: String, firstName: String, age: Long)
 
@@ -16,10 +14,9 @@ object MyJsonProtocol extends DefaultJsonProtocol {
 }
 
 class ServiceActor extends Actor with HttpService with Instrumented {
-   import spray.httpx.SprayJsonSupport._
    private[this] val loading = metrics.timer("loading")
+   import spray.httpx.SprayJsonSupport._
    import MyJsonProtocol._
-   import MyExecutionContext.myec
    def actorRefFactory = context
    def receive = runRoute(noInstrumentation ~ instrumentation)
    val noInstrumentation = {
@@ -27,11 +24,10 @@ class ServiceActor extends Actor with HttpService with Instrumented {
          get {
             respondWithMediaType(`application/json`) {
                complete {
-                  Future {
-                     Thread.sleep(1000) // cause delay
-                     println("going to return object")
+                  Future({
+                     Thread.sleep(300) // cause delay
                      Person("Bob", "Type A", System.currentTimeMillis())
-                  }
+                  })(MyExecutionContext.myec1)
                }
             }
          }
@@ -43,13 +39,29 @@ class ServiceActor extends Actor with HttpService with Instrumented {
          get {
             respondWithMediaType(`application/json`) {
                complete {
-                  loading.timeFuture {
-                     Future {
-                        Thread.sleep(1000) // cause delay
-                        println("going to return instrumented object")
+                  loading.timeFuture ({
+                     Future ({
+                        Thread.sleep(300) // cause delay
                         Person("Bob", "Type A", System.currentTimeMillis())
-                     }
-                  }
+                     })(MyExecutionContext.myec1)
+                  })(MyExecutionContext.myec1)
+               }
+            }
+         }
+      }
+   }
+
+   val newPoolInstrumentataion = {
+      path("path3") {
+         get {
+            respondWithMediaType(`application/json`) {
+               complete {
+                  loading.timeFuture ({
+                     Future ({
+                        Thread.sleep(300) // cause delay
+                        Person("Bob", "Type A", System.currentTimeMillis())
+                     })(MyExecutionContext.myec1)
+                  })(MyExecutionContext.myec2)
                }
             }
          }

@@ -23,5 +23,6 @@ object MyExecutionContext {
    val pool = new ThreadPoolExecutor(20, 100, 100, TimeUnit.SECONDS, new LinkedBlockingQueue[Runnable](),
       new NamedPoolThreadFactory("endpoint-thread", makeDaemons = true))
 
-   implicit val myec : ExecutionContext = ExecutionContext.fromExecutorService(pool)
+   implicit val myec1 : ExecutionContext = ExecutionContext.fromExecutorService(pool)
+   implicit val myec2 : ExecutionContext = ExecutionContext.fromExecutorService(ioThreadPool)
 }
