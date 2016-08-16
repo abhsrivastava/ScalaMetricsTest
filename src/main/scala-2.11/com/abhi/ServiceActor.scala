@@ -28,6 +28,7 @@ class ServiceActor extends Actor with HttpService with Instrumented {
                complete {
                   Future {
                      Thread.sleep(1000) // fuck the server
+                     println("going to return object")
                      Person("Bob", "Type A", System.currentTimeMillis())
                   }
                }
@@ -44,6 +45,7 @@ class ServiceActor extends Actor with HttpService with Instrumented {
                   loading.timeFuture {
                      Future {
                         Thread.sleep(1000) // fuck the server
+                        println("going to return instrumented object")
                         Person("Bob", "Type A", System.currentTimeMillis())
                      }
                   }
