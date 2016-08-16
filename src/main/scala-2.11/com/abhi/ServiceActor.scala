@@ -15,25 +15,6 @@ object MyJsonProtocol extends DefaultJsonProtocol {
    implicit val personFormat = jsonFormat3(Person)
 }
 
-object MyExecutionContext {
-   val ioThreadPool = Executors.newCachedThreadPool(
-      new ThreadFactory {
-         private val counter = new AtomicInteger(0)
-
-         def newThread(r: Runnable) = {
-            val thread = new Thread(r)
-            thread.setName("abhishek-io-thread-" + counter.getAndIncrement.toString)
-            thread.setDaemon(true)
-            thread
-         }
-      })
-
-   val pool = new ThreadPoolExecutor(20, 100, 100, TimeUnit.SECONDS, new LinkedBlockingQueue[Runnable](),
-      new NamedPoolThreadFactory("endpoint-thread", makeDaemons = true))
-
-   implicit val myec : ExecutionContext = ExecutionContext.fromExecutorService(pool)
-}
-
 class ServiceActor extends Actor with HttpService with Instrumented {
    import spray.httpx.SprayJsonSupport._
    private[this] val loading = metrics.timer("loading")
