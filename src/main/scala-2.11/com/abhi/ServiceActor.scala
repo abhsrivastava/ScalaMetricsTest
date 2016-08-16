@@ -36,7 +36,7 @@ class ServiceActor extends Actor with HttpService with Instrumented {
             respondWithMediaType(`application/json`) {
                complete {
                   Future {
-                     Thread.sleep(1000) // cause delay
+                     Thread.sleep(100) // cause delay
                      println("going to return object")
                      Person("Bob", "Type A", System.currentTimeMillis())
                   }
@@ -53,7 +53,7 @@ class ServiceActor extends Actor with HttpService with Instrumented {
                complete {
                   loading.timeFuture {
                      Future {
-                        Thread.sleep(1000) // cause delay
+                        Thread.sleep(100) // cause delay
                         println("going to return instrumented object")
                         Person("Bob", "Type A", System.currentTimeMillis())
                      }
