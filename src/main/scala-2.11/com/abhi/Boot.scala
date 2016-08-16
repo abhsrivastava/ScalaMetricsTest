@@ -13,5 +13,5 @@ object Boot extends App {
    implicit val system = ActorSystem("spray-scala-metrics")
    val service = system.actorOf(Props[ServiceActor], "foobar")
    implicit val timeout = Timeout(.5 seconds)
-   IO(Http) ? Http.Bind(service, interface="localhost", port=8999)
+   IO(Http) ? Http.Bind(service, interface="10.15.53.75", port=8999)
 }

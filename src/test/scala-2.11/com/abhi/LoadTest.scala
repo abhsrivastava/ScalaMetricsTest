@@ -11,7 +11,7 @@ import scala.concurrent.duration._
 
 class LoadTest1 extends Simulation {
    val httpConf = http
-      .baseURL("http://localhost:8999")
+      .baseURL("http://10.15.53.75:8999")
       .acceptHeader("application/json")
       .doNotTrackHeader("1")
       .acceptLanguageHeader("en-US,en;q=0.5")
@@ -34,7 +34,7 @@ class LoadTest1 extends Simulation {
 
 class LoadTest2 extends Simulation {
    val httpConf = http
-      .baseURL("http://localhost:8999")
+      .baseURL("http://10.15.53.75:8999")
       .acceptHeader("application/json")
       .doNotTrackHeader("1")
       .acceptLanguageHeader("en-US,en;q=0.5")
