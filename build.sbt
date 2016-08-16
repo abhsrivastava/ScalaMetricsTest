@@ -24,6 +24,7 @@ libraryDependencies ++= {
       "org.specs2"          %%  "specs2-core"   % "2.3.11" % "test",
       "nl.grons" %% "metrics-scala" % "3.5.4_a2.3",
       "io.gatling.highcharts" % "gatling-charts-highcharts" % "2.2.2" % "test",
-      "io.gatling"            % "gatling-test-framework"    % "2.2.2" % "test"
+      "io.gatling"            % "gatling-test-framework"    % "2.2.2" % "test",
+      "com.twitter" % "util-core_2.11" % "6.35.0"
    )
 }
